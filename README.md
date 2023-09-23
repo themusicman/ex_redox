@@ -22,6 +22,21 @@ alias Redox.Identifier
 |> Redox.request()
 ```
 
+## Configuration
+
+See the Redox authentication documentation for the values below:
+
+```elixir 
+config :joken,
+  default_signer: [
+    signer_alg: "RS384",
+    jose_extra_headers: %{"kid" => "{kid}"},
+    key_pem: System.get_env("REDOX_PEM")
+  ]
+
+config :ex_redox, :redox_client_id, "{client_id}"
+```
+
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 by adding `ex_redox` to your list of dependencies in `mix.exs`:
 
