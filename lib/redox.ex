@@ -12,7 +12,7 @@ defmodule Redox do
     |> Request.send()
   end
 
-  def auth_token() do
+  def access_token() do
     request =
       (Application.get_env(:ex_redox, :redox_url, "https://api.redoxengine.com/") <>
          "v2/auth/token")

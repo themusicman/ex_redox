@@ -22,9 +22,19 @@ alias Redox.Identifier
 |> Redox.request()
 ```
 
+## To get an access token
+
+Configure ex_redox then call
+
+```elixir
+
+access_token = Redox.access_token()
+
+```
+
 ## Configuration
 
-See the Redox authentication documentation for the values below:
+See the Redox authentication documentation for the values below. The easiest way to get these values is to download the Postman environment file in the Redox administration UI. 
 
 ```elixir 
 config :joken,
