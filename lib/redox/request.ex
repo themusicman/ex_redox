@@ -43,9 +43,12 @@ defmodule Redox.Request do
 
   def prepare(value) when is_map(value) do
     value
-    |> Enum.map(fn {key, value} ->
-      key = key |> Atom.to_string() |> Macro.camelize()
-      {key, prepare(value)}
+    |> Enum.reduce([], fn {key, value}, acc ->
+      if is_nil(value) do
+        acc
+      else
+        [{prepare_key(key), prepare(value)} | acc]
+      end
     end)
     |> Enum.into(%{})
   end
@@ -56,5 +59,12 @@ defmodule Redox.Request do
 
   def prepare(value) do
     value
+  end
+
+  def prepare_key(:id), do: "ID"
+  def prepare_key(:id_type), do: "IDType"
+
+  def prepare_key(key) do
+    key |> Atom.to_string() |> Macro.camelize()
   end
 end

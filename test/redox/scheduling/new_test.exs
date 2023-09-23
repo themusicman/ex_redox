@@ -10,7 +10,7 @@ defmodule Redox.Scheduling.NewTest do
       query =
         New.put_meta(%New{
           patient: %Patient{
-            indentifiers: [%Identifier{id: "test", id_type: "test_type"}],
+            indentifiers: [%Identifier{id: "123", id_type: "MR"}],
             demographics: %Demographics{}
           }
         })

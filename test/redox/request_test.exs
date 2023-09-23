@@ -1,6 +1,6 @@
 defmodule Redox.RequestTest do
   use ExUnit.Case
-  alias Redox.Scheduling.New
+  alias Redox.Scheduling
   alias Redox.Patient
   alias Redox.Patient.Demographics
   alias Redox.Identifier
@@ -8,7 +8,7 @@ defmodule Redox.RequestTest do
   describe "prepare_for_request/0" do
     test "returns a map" do
       query =
-        New.put_meta(%New{
+        Scheduling.New.put_meta(%Scheduling.New{
           patient: %Patient{
             indentifiers: [%Identifier{id: "test", id_type: "test_type"}],
             demographics: %Demographics{}
