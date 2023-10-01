@@ -38,7 +38,7 @@ See the Redox authentication documentation for the values below. The easiest way
 
 ```elixir 
 config :joken,
-  default_signer: [
+  ex_redox: [
     signer_alg: "RS384",
     jose_extra_headers: %{"kid" => "{kid}"},
     key_pem: System.get_env("REDOX_PEM")

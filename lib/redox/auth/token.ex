@@ -9,7 +9,7 @@ defmodule Redox.Auth.Token do
   end
 
   def client_assertion() do
-    {:ok, token, _claims} = generate_and_sign()
+    {:ok, token, _claims} = generate_and_sign(%{}, :ex_redox)
     token
   end
 end

@@ -1,4 +1,4 @@
-defmodule Redox.Patient.Demographics do
+defmodule Redox.Demographics do
   defstruct first_name: nil,
             middle_name: nil,
             last_name: nil,
