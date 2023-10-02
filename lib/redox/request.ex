@@ -1,5 +1,7 @@
 defmodule Redox.Request do
   alias __MODULE__
+  require Logger
+  alias Redox.Request.Data
 
   defstruct query: nil, url: "", data: nil, auth: false, access_token: nil, legacy: false
 
@@ -12,7 +14,7 @@ defmodule Redox.Request do
   end
 
   def put_data(request) do
-    %{request | data: Redox.Request.Serializer.encode(request.query)}
+    %{request | data: Data.to_redox(request.query)}
   end
 
   def put_api_key(_request, nil, _secret), do: raise("api_key must be configured")
@@ -27,7 +29,7 @@ defmodule Redox.Request do
     raise "data can't be nil"
   end
 
-  def send(%Request{url: url, data: data, auth: false, access_token: access_token, query: query}) do
+  def send(%Request{url: url, data: data, auth: false, access_token: access_token}) do
     IO.inspect(data: data)
     # Todo make better ex. handle auth token expired more gracefully 
     case HTTPoison.post(url, Jason.encode!(data), [
@@ -35,20 +37,15 @@ defmodule Redox.Request do
            {"Authorization", "Bearer #{access_token}"}
          ]) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        Redox.Request.Serializer.decode(query, Jason.decode!(body))
+        body |> Jason.decode!() |> Data.from_redox()
 
-      {:ok, %HTTPoison.Response{status_code: 201, body: body}} ->
-        IO.puts(body)
-
-      {:ok, %HTTPoison.Response{status_code: 401, body: body}} ->
-        IO.puts("401")
-        IO.puts(body)
-
-      {:ok, %HTTPoison.Response{status_code: 400, body: body}} ->
-        IO.puts(body)
+      {:ok, %HTTPoison.Response{status_code: status_code, body: body}} ->
+        Logger.error(
+          "Redox.Request.send status_code=#{inspect(status_code)} body=#{inspect(body)}"
+        )
 
       {:error, %HTTPoison.Error{reason: reason}} ->
-        IO.inspect(reason)
+        Logger.error("Redox.Request.send reason=#{inspect(reason)}")
     end
   end
 
@@ -60,11 +57,13 @@ defmodule Redox.Request do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         Jason.decode!(body)
 
-      {:ok, %HTTPoison.Response{status_code: 400, body: body}} ->
-        IO.inspect(body)
+      {:ok, %HTTPoison.Response{status_code: status_code, body: body}} ->
+        Logger.error(
+          "Redox.Request.send status_code=#{inspect(status_code)} body=#{inspect(body)}"
+        )
 
       {:error, %HTTPoison.Error{reason: reason}} ->
-        IO.inspect(reason)
+        Logger.error("Redox.Request.send reason=#{inspect(reason)}")
     end
   end
 
@@ -76,11 +75,13 @@ defmodule Redox.Request do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         Jason.decode!(body)
 
-      {:ok, %HTTPoison.Response{status_code: 400, body: body}} ->
-        IO.inspect(body)
+      {:ok, %HTTPoison.Response{status_code: status_code, body: body}} ->
+        Logger.error(
+          "Redox.Request.send status_code=#{inspect(status_code)} body=#{inspect(body)}"
+        )
 
       {:error, %HTTPoison.Error{reason: reason}} ->
-        IO.inspect(reason)
+        Logger.error("Redox.Request.send reason=#{inspect(reason)}")
     end
   end
 end
