@@ -1,14 +1,20 @@
 defmodule Redox.Request do
   alias __MODULE__
+  require Logger
+  alias Redox.Request.Data
 
-  defstruct url: "", data: nil, auth: false
+  defstruct query: nil, url: "", data: nil, auth: false, access_token: nil, legacy: false
 
   def new(url) do
     %Request{url: url}
   end
 
-  def put_data(request, query) do
-    %{request | data: prepare(query)}
+  def new(url, query, access_token) do
+    %Request{url: url, query: query, access_token: access_token}
+  end
+
+  def put_data(request) do
+    %{request | data: Data.to_redox(request.query)}
   end
 
   def put_api_key(_request, nil, _secret), do: raise("api_key must be configured")
@@ -23,24 +29,27 @@ defmodule Redox.Request do
     raise "data can't be nil"
   end
 
-  def send(%Request{url: url, data: data, auth: false}) do
+  def send(%Request{url: url, data: data, auth: false, access_token: access_token}) do
+    IO.inspect(data: data)
     # Todo make better ex. handle auth token expired more gracefully 
-    case HTTPoison.post(url, Jason.encode!(data), [{"Content-Type", "application/json"}]) do
+    case HTTPoison.post(url, Jason.encode!(data), [
+           {"Content-Type", "application/json"},
+           {"Authorization", "Bearer #{access_token}"}
+         ]) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        IO.puts(body)
+        body |> Jason.decode!() |> Data.from_redox()
 
-      {:ok, %HTTPoison.Response{status_code: 201, body: body}} ->
-        IO.puts(body)
-
-      {:ok, %HTTPoison.Response{status_code: 400, body: body}} ->
-        IO.puts(body)
+      {:ok, %HTTPoison.Response{status_code: status_code, body: body}} ->
+        Logger.error(
+          "Redox.Request.send status_code=#{inspect(status_code)} body=#{inspect(body)}"
+        )
 
       {:error, %HTTPoison.Error{reason: reason}} ->
-        IO.inspect(reason)
+        Logger.error("Redox.Request.send reason=#{inspect(reason)}")
     end
   end
 
-  def send(%Request{url: url, data: data, auth: true}) do
+  def send(%Request{url: url, data: data, auth: true, legacy: false}) do
     # make better
     body = URI.encode_query(data)
 
@@ -48,47 +57,31 @@ defmodule Redox.Request do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         Jason.decode!(body)
 
-      {:ok, %HTTPoison.Response{status_code: 400, body: body}} ->
-        IO.inspect(body)
+      {:ok, %HTTPoison.Response{status_code: status_code, body: body}} ->
+        Logger.error(
+          "Redox.Request.send status_code=#{inspect(status_code)} body=#{inspect(body)}"
+        )
 
       {:error, %HTTPoison.Error{reason: reason}} ->
-        IO.inspect(reason)
+        Logger.error("Redox.Request.send reason=#{inspect(reason)}")
     end
   end
 
-  @doc """
-  Turn structs into a map
-  """
-  def prepare(nil), do: nil
+  def send(%Request{url: url, data: data, auth: true, legacy: true}) do
+    # make better
+    body = Jason.encode!(data)
 
-  def prepare(value) when is_struct(value) do
-    prepare(Map.from_struct(value))
-  end
+    case HTTPoison.post(url, body, %{"Content-Type" => "application/json"}) do
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+        Jason.decode!(body)
 
-  def prepare(value) when is_map(value) do
-    value
-    |> Enum.reduce([], fn {key, value}, acc ->
-      if is_nil(value) do
-        acc
-      else
-        [{prepare_key(key), prepare(value)} | acc]
-      end
-    end)
-    |> Enum.into(%{})
-  end
+      {:ok, %HTTPoison.Response{status_code: status_code, body: body}} ->
+        Logger.error(
+          "Redox.Request.send status_code=#{inspect(status_code)} body=#{inspect(body)}"
+        )
 
-  def prepare([head | tail]) do
-    [prepare(head) | prepare(tail)]
-  end
-
-  def prepare(value) do
-    value
-  end
-
-  def prepare_key(:id), do: "ID"
-  def prepare_key(:id_type), do: "IDType"
-
-  def prepare_key(key) do
-    key |> Atom.to_string() |> Macro.camelize()
+      {:error, %HTTPoison.Error{reason: reason}} ->
+        Logger.error("Redox.Request.send reason=#{inspect(reason)}")
+    end
   end
 end
