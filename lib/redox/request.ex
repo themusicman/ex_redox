@@ -30,7 +30,6 @@ defmodule Redox.Request do
   end
 
   def send(%Request{url: url, data: data, auth: false, access_token: access_token}) do
-    IO.inspect(data: data)
     # Todo make better ex. handle auth token expired more gracefully 
     case HTTPoison.post(url, Jason.encode!(data), [
            {"Content-Type", "application/json"},
