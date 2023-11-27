@@ -1,3 +1,3 @@
 defmodule Redox.Patient do
-  defstruct indentifiers: [], demographics: nil, notes: nil
+  defstruct identifiers: [], demographics: nil, notes: nil
 end

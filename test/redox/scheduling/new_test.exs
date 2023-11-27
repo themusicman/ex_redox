@@ -2,7 +2,7 @@ defmodule Redox.Scheduling.NewTest do
   use ExUnit.Case
   alias Redox.Scheduling.New
   alias Redox.Patient
-  alias Redox.Patient.Demographics
+  alias Redox.Demographics
   alias Redox.Identifier
 
   describe "put_meta/2" do

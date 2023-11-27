@@ -9,7 +9,7 @@ Example
 ```elixir
 alias Redox.Scheduling
 alias Redox.Patient
-alias Redox.Patient.Demographics
+alias Redox.Demographics
 alias Redox.Identifier
 
 %Scheduling.New{
