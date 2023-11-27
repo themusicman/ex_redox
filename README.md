@@ -14,7 +14,7 @@ alias Redox.Identifier
 
 %Scheduling.New{
   patient: %Patient{
-    indentifiers: [%Identifier{id: "123", id_type: "MR"}],
+    identifiers: [%Identifier{id: "123", id_type: "MR"}],
     demographics: %Demographics{}
   }
 }
@@ -34,9 +34,9 @@ access_token = Redox.access_token()
 
 ## Configuration
 
-See the Redox authentication documentation for the values below. The easiest way to get these values is to download the Postman environment file in the Redox administration UI. 
+See the Redox authentication documentation for the values below. The easiest way to get these values is to download the Postman environment file in the Redox administration UI.
 
-```elixir 
+```elixir
 config :joken,
   ex_redox: [
     signer_alg: "RS384",
@@ -61,4 +61,3 @@ end
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at <https://hexdocs.pm/ex_redox>.
-
