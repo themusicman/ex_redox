@@ -4,6 +4,6 @@ defmodule Redox.Demographics do
             last_name: nil,
             dob: nil,
             phone_number: nil,
-            email_address: nil,
+            email_addresses: nil,
             address: nil
 end

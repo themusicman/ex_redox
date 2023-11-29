@@ -28,6 +28,7 @@ defmodule Redox.Request.Data do
     value
   end
 
+  def to_redox_key(:dob), do: "DOB"
   def to_redox_key(:id), do: "ID"
   def to_redox_key(:id_type), do: "IDType"
 
@@ -59,6 +60,7 @@ defmodule Redox.Request.Data do
     value
   end
 
+  def from_redox_key("DOB"), do: :dob
   def from_redox_key("ID"), do: :id
   def from_redox_key("IDType"), do: :id_type
 
