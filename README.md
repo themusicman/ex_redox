@@ -11,6 +11,7 @@ alias Redox.Scheduling
 alias Redox.Patient
 alias Redox.Demographics
 alias Redox.Identifier
+alias Redox.Meta
 
 %Scheduling.New{
   patient: %Patient{
@@ -18,7 +19,7 @@ alias Redox.Identifier
     demographics: %Demographics{}
   }
 }
-|> Scheduling.New.put_meta()
+|> Meta.put()
 |> Redox.request()
 ```
 
