@@ -1,19 +1,22 @@
 defmodule Redox.Scheduling.New do
-  alias Redox.Meta
+  @moduledoc """
+  Represents a Redox Scheduling New data model
+  """
 
+  @typedoc """
+  Redox Scheduling New
+  """
+  @type t :: %{
+          meta: Redox.Meta.t(),
+          patient: struct(),
+          appointment_info: struct(),
+          visit: struct()
+        }
   defstruct meta: nil, patient: nil, appointment_info: nil, visit: nil
 
-  def put_meta(query, attrs \\ []) do
-    test = Keyword.get(attrs, :test, false)
-
-    %{
-      query
-      | meta: %Meta{
-          data_model: "Scheduling",
-          event_type: "New",
-          event_date_time: DateTime.utc_now() |> DateTime.to_iso8601(),
-          test: test
-        }
-    }
+  defimpl Redox.Metable do
+    def put(type, meta) do
+      Map.put(type, :meta, %{meta | data_model: "Scheduling", event_type: "New"})
+    end
   end
 end

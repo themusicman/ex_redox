@@ -24,7 +24,6 @@ defmodule Redox do
         legacy: true
     }
 
-    # TODO handle the refresh token
     %{"accessToken" => access_token} = Request.send(request)
     access_token
   end

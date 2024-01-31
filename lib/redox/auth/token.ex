@@ -1,4 +1,7 @@
 defmodule Redox.Auth.Token do
+  @moduledoc """
+  Module used to generate JWT for authentication with the Redox API
+  """
   use Joken.Config
 
   def token_config do
@@ -8,7 +11,7 @@ defmodule Redox.Auth.Token do
     |> add_claim("sub", fn -> client_id end, &(&1 == client_id))
   end
 
-  def client_assertion() do
+  def client_assertion do
     {:ok, token, _claims} = generate_and_sign(%{}, :ex_redox)
     token
   end

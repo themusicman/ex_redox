@@ -1,4 +1,7 @@
 defmodule Redox.Visit do
+  @moduledoc """
+  Represents a Redox Visit
+  """
   defstruct visit_number: nil,
             account_number: nil,
             visit_date_time: nil,

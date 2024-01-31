@@ -1,7 +1,10 @@
 defmodule Redox.Request do
-  alias __MODULE__
+  @moduledoc """
+  Handles sending a request to Redox
+  """
   require Logger
   alias Redox.Request.Data
+  alias __MODULE__
 
   defstruct query: nil, url: "", data: nil, auth: false, access_token: nil, legacy: false
 
@@ -30,7 +33,6 @@ defmodule Redox.Request do
   end
 
   def send(%Request{url: url, data: data, auth: false, access_token: access_token}) do
-    # Todo make better ex. handle auth token expired more gracefully 
     case HTTPoison.post(url, Jason.encode!(data), [
            {"Content-Type", "application/json"},
            {"Authorization", "Bearer #{access_token}"}

@@ -1,4 +1,7 @@
 defmodule Redox.Request.Data do
+  @moduledoc """
+  Handles serializing and deserializing data
+  """
   @doc """
   Turn structs into a map
   """
@@ -11,7 +14,7 @@ defmodule Redox.Request.Data do
   def to_redox(value) when is_map(value) do
     value
     |> Enum.reduce([], fn {key, value}, acc ->
-      if is_nil(value) do
+      if Flamel.blank?(value) do
         acc
       else
         [{to_redox_key(key), to_redox(value)} | acc]
@@ -40,16 +43,15 @@ defmodule Redox.Request.Data do
   Converts a json response from Redox
   """
   def from_redox(value) when is_map(value) do
-    value =
-      value
-      |> Enum.reduce([], fn {key, value}, acc ->
-        if is_nil(value) do
-          acc
-        else
-          [{from_redox_key(key), from_redox(value)} | acc]
-        end
-      end)
-      |> Enum.into(%{})
+    value
+    |> Enum.reduce([], fn {key, value}, acc ->
+      if Flamel.blank?(value) do
+        acc
+      else
+        [{from_redox_key(key), from_redox(value)} | acc]
+      end
+    end)
+    |> Enum.into(%{})
   end
 
   def from_redox([head | tail]) do
@@ -65,6 +67,6 @@ defmodule Redox.Request.Data do
   def from_redox_key("IDType"), do: :id_type
 
   def from_redox_key(key) do
-    key |> Macro.underscore() |> String.to_atom()
+    key |> Macro.underscore() |> String.to_existing_atom()
   end
 end
